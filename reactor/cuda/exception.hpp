@@ -5,6 +5,13 @@
 
 // C++ headers
 #include <system_error>
+#include <iomanip>
+#include <sstream>
+
+#ifdef _WIN32
+#include <sdkddkver.h>
+#include <Windows.h>
+#endif
 
 // CUDA driver api headers
 #ifndef __cuda_cuda_h__
@@ -34,7 +41,7 @@ namespace reactor
           return "CUDA driver api exception";
         }
 
-        std::string message(int const error) const
+        std::string message(int const error) const throw()
         {
           char const * msg = nullptr;
           if (::cuGetErrorString(static_cast<CUresult>(error), &msg)) {
@@ -52,7 +59,7 @@ namespace reactor
           return "CUDA runtime api exception";
         }
 
-        std::string message(int const error) const
+        std::string message(int const error) const throw()
         {
           return ::cudaGetErrorString(static_cast<cudaError_t>(error));
         }
@@ -60,21 +67,47 @@ namespace reactor
 
     public:
       inline exception(CUresult const error) throw()
-        : std::system_error(error, reactor::cuda::exception::driver_api_category())
+        : exception(error, "")
+      {
+      }
+
+      inline exception(CUresult const error, std::string const & message) throw()
+        : std::system_error(error, reactor::cuda::exception::driver_api_category(), message)
       {
       }
 
       inline exception(cudaError_t const error) throw()
-        : std::system_error(error, reactor::cuda::exception::runtime_api_category())
+        : exception(error, "")
+      {
+      }
+
+      inline exception(cudaError_t const error, std::string const & message) throw()
+        : std::system_error(error, reactor::cuda::exception::runtime_api_category(), message)
       {
       }
     };
+
+#ifdef _WIN32
+#endif
 
     template <typename ErrorCode>
     inline void throw_if_failed(ErrorCode const e) throw(reactor::cuda::exception)
     {
       if (e) {
+#ifdef _WIN32
+        void * backtrace[63]; // the number of frames must be less than 63.
+        std::size_t const size = ::RtlCaptureStackBackTrace(0,
+          sizeof(backtrace) / sizeof(backtrace[0]), backtrace, nullptr);
+
+        std::ostringstream out;
+        for (std::size_t i = 0; i < size; ++i) {
+          out << std::setw(16) << std::ios::hex << backtrace[i] << '\n';
+        }
+
+        throw reactor::cuda::exception(e, out.str());
+#else
         throw reactor::cuda::exception(e);
+#endif
       }
     }
   }
