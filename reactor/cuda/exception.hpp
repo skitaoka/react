@@ -60,7 +60,7 @@ namespace reactor
         DWORD64 const addr = reinterpret_cast<DWORD64>(address);
 
 
-        // ƒ‚ƒWƒ…[ƒ‹–¼‚Ìæ“¾
+        // ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«åã®å–å¾—
         {
           IMAGEHLP_MODULE64 module = {sizeof(IMAGEHLP_MODULE64)};
           if (ready && ::SymGetModuleInfo64(hProcess, addr, &module)) {
@@ -70,9 +70,9 @@ namespace reactor
           }
         }
 
-        // ŠÖ”–¼‚Ìæ“¾
+        // é–¢æ•°åã®å–å¾—
         {
-          // ƒVƒ“ƒ{ƒ‹–¼‚ğŠi”[‚·‚é‚½‚ß‚Ìƒoƒbƒtƒ@‚ğŠm•Û
+          // ã‚·ãƒ³ãƒœãƒ«åã‚’æ ¼ç´ã™ã‚‹ãŸã‚ã®ãƒãƒƒãƒ•ã‚¡ã‚’ç¢ºä¿
           char symbol_buffer[sizeof(IMAGEHLP_SYMBOL64)+MAX_PATH];
           std::memset(symbol_buffer, 0, sizeof(symbol_buffer));
 
@@ -88,7 +88,7 @@ namespace reactor
           }
         }
 
-        // ƒtƒ@ƒCƒ‹–¼‚Æs”‚Ìæ“¾
+        // ãƒ•ã‚¡ã‚¤ãƒ«åã¨è¡Œæ•°ã®å–å¾—
         {
           DWORD displacement = 0;
 
