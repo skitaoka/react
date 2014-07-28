@@ -18,6 +18,18 @@ namespace reactor
     {
       return _.query();
     }
+
+    template <typename Notifiable, typename Event>
+    inline void notify(Notifiable const & _, Event const & evt)
+    {
+      _.notify(evt);
+    }
+
+    template <typename Waitable, typename Event>
+    inline void wait(Waitable const & _, Event const & evt)
+    {
+      _.wait(evt);
+    }
   }
 }
 
