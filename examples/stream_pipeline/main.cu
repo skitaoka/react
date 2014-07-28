@@ -4,6 +4,7 @@
 #include <reactor/cuda/context.hpp>
 #include <reactor/cuda/memory.hpp>
 #include <reactor/cuda/stream.hpp>
+#include <reactor/cuda/utility.hpp>
 
 __global__ void da(int * const a) { *a = 3; }
 __global__ void db(int * const b) { *b = 7; }
@@ -46,36 +47,36 @@ try
 
 			{
 				da<<<1, 1, 0, s1.get()>>>(d_a.get());
-				s1.notify(e1);
+        reactor::cuda::notify(s1, e1);
 				reactor::cuda::memcpy(&a, d_a.get(), 1, s1.get());
 			}
 			{
 				db<<<1, 1, 0, s2.get()>>>(d_b.get());
-				s2.notify(e2);
+        reactor::cuda::notify(s2, e2);
 				reactor::cuda::memcpy(&b, d_b.get(), 1, s2.get());
 			}
 			{
-				s3.wait(e1);
-				s3.wait(e2);
+        reactor::cuda::wait(s3, e1);
+        reactor::cuda::wait(s3, e2);
 				dc<<<1, 1, 0, s3.get()>>>(d_a.get(), d_b.get(), d_c.get());
 				reactor::cuda::memcpy(&c, d_c.get(), 1, s3.get());
 			}
 			{
-				s4.wait(e1);
-				s4.wait(e2);
+        reactor::cuda::wait(s4, e1);
+        reactor::cuda::wait(s4, e2);
 				dd<<<1, 1, 0, s4.get()>>>(d_a.get(), d_b.get(), d_d.get());
 				reactor::cuda::memcpy(&d, d_d.get(), 1, s4.get());
 			}
 			{
-				s1.synchronize();
-				s2.synchronize();
-				s3.synchronize();
+        reactor::cuda::synchronize(s1);
+        reactor::cuda::synchronize(s2);
+        reactor::cuda::synchronize(s3);
 				std::cout << a << " + " << b << " = " << c << '\n';
 			}
 			{
-				s1.synchronize();
-				s2.synchronize();
-				s4.synchronize();
+        reactor::cuda::synchronize(s1);
+        reactor::cuda::synchronize(s2);
+        reactor::cuda::synchronize(s4);
 				std::cout << a << " * " << b << " = " << d << '\n';
 			}
 #else
@@ -97,17 +98,17 @@ try
 			int c = -1;
 			int d = -1;
 
-			da<<<1, 1, 0, sc.get()>>>(d_a.get()                      ); sc.notify(ea);
-			db<<<1, 1, 0, sc.get()>>>(d_b.get()                      ); sc.notify(eb);
-			dc<<<1, 1, 0, sc.get()>>>(d_a.get(), d_b.get(), d_c.get()); sc.notify(ec);
-			dd<<<1, 1, 0, sc.get()>>>(d_a.get(), d_b.get(), d_d.get()); sc.notify(ed);
+			da<<<1, 1, 0, sc.get()>>>(d_a.get()                      ); reactor::cuda::notify(sc, ea);
+			db<<<1, 1, 0, sc.get()>>>(d_b.get()                      ); reactor::cuda::notify(sc, eb);
+			dc<<<1, 1, 0, sc.get()>>>(d_a.get(), d_b.get(), d_c.get()); reactor::cuda::notify(sc, ec);
+			dd<<<1, 1, 0, sc.get()>>>(d_a.get(), d_b.get(), d_d.get()); reactor::cuda::notify(sc, ed);
 
-			st.wait(ea); reactor::cuda::memcpy(&a, d_a.get(), 1, st.get());
-			st.wait(eb); reactor::cuda::memcpy(&b, d_b.get(), 1, st.get());
-			st.wait(ec); reactor::cuda::memcpy(&c, d_c.get(), 1, st.get());
-			st.wait(ed); reactor::cuda::memcpy(&d, d_d.get(), 1, st.get());
+			reactor::cuda::wait(st, ea); reactor::cuda::memcpy(&a, d_a.get(), 1, st.get());
+			reactor::cuda::wait(st, eb); reactor::cuda::memcpy(&b, d_b.get(), 1, st.get());
+			reactor::cuda::wait(st, ec); reactor::cuda::memcpy(&c, d_c.get(), 1, st.get());
+			reactor::cuda::wait(st, ed); reactor::cuda::memcpy(&d, d_d.get(), 1, st.get());
 
-			st.synchronize();
+			reactor::cuda::synchronize(st);
 			std::cout << a << " + " << b << " = " << c << '\n';
 			std::cout << a << " * " << b << " = " << d << '\n';
 #endif
