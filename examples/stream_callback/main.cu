@@ -14,23 +14,22 @@ __host__ void CUDART_CB h2(cudaStream_t stream, cudaError_t status, void *userDa
 int main()
 try
 {
-	std::ios::sync_with_stdio(false);
+  std::ios::sync_with_stdio(false);
 
-  reactor::cuda::context _(1);
-	{
-		reactor::cuda::stream s1;
+  reactor::cuda::context _;
+  {
+    reactor::cuda::stream s1;
 
-		k1<<<1,1,0,s1.get()>>>();
-		s1.invoke(h1);
-		k2<<<1,1,0,s1.get()>>>();
-		s1.invoke(h2);
-		k3<<<1,1,0,s1.get()>>>();
-		reactor::cuda::synchronize(s1);
-	}
+    k1 << <1, 1, 0, s1.get() >> >();
+    s1.invoke(h1);
+    k2 << <1, 1, 0, s1.get() >> >();
+    s1.invoke(h2);
+    k3 << <1, 1, 0, s1.get() >> >();
+    reactor::cuda::synchronize(s1);
+  }
 
   return 0;
 }
-catch (reactor::cuda::exception const & e)
-{
-	std::cerr << e.what() << '\n';
+catch (reactor::cuda::exception const & e) {
+  std::cerr << e.what() << '\n';
 }
