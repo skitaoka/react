@@ -26,7 +26,7 @@ namespace reactor
         stream() throw(reactor::cuda::exception)
       {
         cudaStream_t _ = nullptr;
-        REACTOR_CUDA_THROW_IF_FAILED(::cudaStreamCreateWithFlags(&_, cudaStreamNonBlocking));
+        reactor::cuda::throw_if_failed(::cudaStreamCreateWithFlags(&_, cudaStreamNonBlocking));
         super_type::reset(_, [](cudaStream_t const _)
         {
           ::cudaStreamSynchronize(_);
@@ -38,7 +38,7 @@ namespace reactor
       inline __host__
         void synchronize() const throw(reactor::cuda::exception)
       {
-        REACTOR_CUDA_THROW_IF_FAILED(::cudaStreamSynchronize(super_type::get()));
+          reactor::cuda::throw_if_failed(::cudaStreamSynchronize(super_type::get()));
       }
 
       inline __host__
@@ -48,7 +48,7 @@ namespace reactor
         if (retval == cudaErrorNotReady) {
           return false;
         }
-        REACTOR_CUDA_THROW_IF_FAILED(retval);
+        reactor::cuda::throw_if_failed(retval);
         return true;
       }
 
@@ -56,13 +56,13 @@ namespace reactor
       inline __host__
         void notify(reactor::cuda::event const & evt) const throw(reactor::cuda::exception)
       {
-        REACTOR_CUDA_THROW_IF_FAILED(::cudaEventRecord(evt.get(), super_type::get()));
+        reactor::cuda::throw_if_failed(::cudaEventRecord(evt.get(), super_type::get()));
       }
 
       inline __host__
         void wait(reactor::cuda::event const & evt) const throw(reactor::cuda::exception)
       {
-        REACTOR_CUDA_THROW_IF_FAILED(::cudaStreamWaitEvent(super_type::get(), evt.get(), 0));
+        reactor::cuda::throw_if_failed(::cudaStreamWaitEvent(super_type::get(), evt.get(), 0));
       }
 
     public:
@@ -76,14 +76,14 @@ namespace reactor
       inline __host__
         void invoke(cudaStreamCallback_t callback, T * const data) const throw(reactor::cuda::exception)
       {
-        REACTOR_CUDA_THROW_IF_FAILED(::cudaStreamAddCallback(super_type::get(), callback, data, 0));
+        reactor::cuda::throw_if_failed(::cudaStreamAddCallback(super_type::get(), callback, data, 0));
       }
 
     public:
       inline __host__
         void attach(void * const ptr, bool const enable_sync = false) const throw(reactor::cuda::exception)
       {
-        REACTOR_CUDA_THROW_IF_FAILED(::cudaStreamAttachMemAsync(super_type::get(), ptr, 0, cudaMemAttachGlobal));
+        reactor::cuda::throw_if_failed(::cudaStreamAttachMemAsync(super_type::get(), ptr, 0, cudaMemAttachGlobal));
         if (enable_sync) {
           this->synchronize();
         }
@@ -92,7 +92,7 @@ namespace reactor
       inline __host__
         void detach(void * const ptr, bool const enable_sync = false) const throw(reactor::cuda::exception)
       {
-        REACTOR_CUDA_THROW_IF_FAILED(::cudaStreamAttachMemAsync(super_type::get(), ptr, 0, cudaMemAttachHost));
+        reactor::cuda::throw_if_failed(::cudaStreamAttachMemAsync(super_type::get(), ptr, 0, cudaMemAttachHost));
         if (enable_sync) {
           this->synchronize();
         }

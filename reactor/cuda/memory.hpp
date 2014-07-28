@@ -24,9 +24,9 @@ namespace reactor
     {
       void * _ = nullptr;
       if (is_managed) {
-        REACTOR_CUDA_THROW_IF_FAILED(::cudaMallocManaged(&_, size * sizeof(T), cudaMemAttachGlobal));
+        reactor::cuda::throw_if_failed(::cudaMallocManaged(&_, size * sizeof(T), cudaMemAttachGlobal));
       } else {
-        REACTOR_CUDA_THROW_IF_FAILED(::cudaMalloc(&_, size * sizeof(T)));
+        reactor::cuda::throw_if_failed(::cudaMalloc(&_, size * sizeof(T)));
       }
       return std::shared_ptr<T>(reinterpret_cast<T*>(_), [](T * const _) { ::cudaFree(_); });
     }
@@ -38,7 +38,7 @@ namespace reactor
     inline __host__
       void memcpy(T * const dst, T const * const src, std::size_t const size, cudaStream_t stream) throw(reactor::cuda::exception)
     {
-      REACTOR_CUDA_THROW_IF_FAILED(::cudaMemcpyAsync(dst, src, size * sizeof(T), cudaMemcpyDefault, stream));
+      reactor::cuda::throw_if_failed(::cudaMemcpyAsync(dst, src, size * sizeof(T), cudaMemcpyDefault, stream));
     }
   }
 }

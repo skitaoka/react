@@ -26,7 +26,7 @@ namespace reactor
         event() throw(reactor::cuda::exception)
       {
         cudaEvent_t _ = nullptr;
-        REACTOR_CUDA_THROW_IF_FAILED(::cudaEventCreateWithFlags(&_, cudaEventDisableTiming));
+        reactor::cuda::throw_if_failed(::cudaEventCreateWithFlags(&_, cudaEventDisableTiming));
         super_type::reset(_, [](cudaEvent_t const _)
         {
           ::cudaEventDestroy(_);
@@ -37,7 +37,7 @@ namespace reactor
       inline __host__
         void synchronize() const throw(reactor::cuda::exception)
       {
-        REACTOR_CUDA_THROW_IF_FAILED(::cudaEventSynchronize(super_type::get()));
+        reactor::cuda::throw_if_failed(::cudaEventSynchronize(super_type::get()));
       }
 
       inline __host__
@@ -47,7 +47,7 @@ namespace reactor
         if (retval == cudaErrorNotReady) {
           return false;
         }
-        REACTOR_CUDA_THROW_IF_FAILED(retval);
+        reactor::cuda::throw_if_failed(retval);
         return true;
       }
     };

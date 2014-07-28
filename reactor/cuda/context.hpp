@@ -21,16 +21,16 @@ namespace reactor
         context(int const device = 0) throw(reactor::cuda::exception)
         : device_(device)
       {
-        REACTOR_CUDA_THROW_IF_FAILED(::cudaSetDevice(device));
+        reactor::cuda::throw_if_failed(::cudaSetDevice(device));
       }
 
       inline __host__
         void enable() const throw(reactor::cuda::exception)
       {
         int device = -1;
-        REACTOR_CUDA_THROW_IF_FAILED(::cudaGetDevice(&device));
+        reactor::cuda::throw_if_failed(::cudaGetDevice(&device));
         if (device != device_) {
-          REACTOR_CUDA_THROW_IF_FAILED(::cudaSetDevice(device_));
+          reactor::cuda::throw_if_failed(::cudaSetDevice(device_));
         }
       }
 
@@ -38,7 +38,7 @@ namespace reactor
         void synchronize() const throw(reactor::cuda::exception)
       {
         enable();
-        REACTOR_CUDA_THROW_IF_FAILED(::cudaDeviceSynchronize());
+        reactor::cuda::throw_if_failed(::cudaDeviceSynchronize());
       }
 
       inline __host__
