@@ -25,7 +25,7 @@ namespace reactor
       }
 
       inline __host__
-        void enable() throw(reactor::cuda::exception)
+        void enable() const throw(reactor::cuda::exception)
       {
         int device = -1;
         REACTOR_CUDA_THROW_IF_FAILED(::cudaGetDevice(&device));
@@ -35,7 +35,7 @@ namespace reactor
       }
 
       inline __host__
-        void synchronize() throw(reactor::cuda::exception)
+        void synchronize() const throw(reactor::cuda::exception)
       {
         enable();
         REACTOR_CUDA_THROW_IF_FAILED(::cudaDeviceSynchronize());
