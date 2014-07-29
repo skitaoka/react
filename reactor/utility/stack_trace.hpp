@@ -105,6 +105,46 @@ namespace reactor
 #endif
       }
 
+#if defined(_WIN32) && !defined(NDEBUG)
+      std::ostream & operator () (std::ostream & out, void const * address) const
+      {
+        HANDLE const hProcess = ::GetCurrentProcess();
+        DWORD64 const addr = reinterpret_cast<DWORD64>(address);
+
+        // ファイル名と行数の取得
+        {
+          DWORD displacement = 0;
+
+          IMAGEHLP_LINE64 file = { sizeof(IMAGEHLP_LINE64) };
+          if (ready_ && ::SymGetLineFromAddr64(hProcess, addr, &displacement, &file)) {
+            out << file.FileName << '(' << file.LineNumber << "): ";
+          }
+          else {
+            out << "unknown(-1): ";
+          }
+        }
+
+        // 関数名の取得
+        {
+          // シンボル名を格納するためのバッファを確保
+          char symbol_buffer[sizeof(IMAGEHLP_SYMBOL64)+MAX_PATH];
+          std::memset(symbol_buffer, 0, sizeof(symbol_buffer));
+
+          IMAGEHLP_SYMBOL64 * psymbol = reinterpret_cast<IMAGEHLP_SYMBOL64 *>(symbol_buffer);
+          psymbol->SizeOfStruct = sizeof(IMAGEHLP_SYMBOL64);
+          psymbol->MaxNameLength = MAX_PATH;
+
+          DWORD64 displacement = 0;
+          if (ready_ && ::SymGetSymFromAddr64(hProcess, addr, &displacement, psymbol)) {
+            out << psymbol->Name;
+          } else {
+            out << "unknown";
+          }
+        }
+
+        return out;
+      }
+#else
       std::ostream & operator () (std::ostream & out, void const * address)
 #ifdef _WIN32
         const
@@ -177,9 +217,9 @@ namespace reactor
         {
           DWORD displacement = 0;
 
-          IMAGEHLP_LINE64 line = {sizeof(IMAGEHLP_LINE64)};
-          if (ready_ && ::SymGetLineFromAddr64(hProcess, addr, &displacement, &line)) {
-            out << '(' << reactor::utility::path_to_filename(line.FileName) << ':' << line.LineNumber << ')';
+          IMAGEHLP_LINE64 file = {sizeof(IMAGEHLP_LINE64)};
+          if (ready_ && ::SymGetLineFromAddr64(hProcess, addr, &displacement, &file)) {
+            out << '(' << reactor::utility::path_to_filename(file.FileName) << ':' << file.LineNumber << ')';
           } else {
             out << "(unknown:-1)";
           }
@@ -194,6 +234,7 @@ namespace reactor
 #endif
         return out;
       }
+#endif
 
     public:
       inline static std::ostream & convert(std::ostream & out, void const * address)
@@ -233,7 +274,7 @@ namespace reactor
       }
       return out.str();
 #else
-      return "";
+      return "\n";
 #endif
     }
   }

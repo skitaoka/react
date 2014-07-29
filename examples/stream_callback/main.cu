@@ -16,7 +16,7 @@ try
 {
   std::ios::sync_with_stdio(false);
 
-  reactor::cuda::context _;
+  reactor::cuda::context _(1);
   {
     reactor::cuda::stream s1;
 
@@ -31,5 +31,6 @@ try
   return 0;
 }
 catch (reactor::cuda::exception const & e) {
-  std::cerr << e.what() << '\n';
+  ::OutputDebugString(e.what());
+  ::OutputDebugString("\n");
 }
