@@ -21,7 +21,8 @@
 
 // glibc の機能を使う
 // env needs "yum install binutils-devel"
-// g++ needs options: -lbfd -liberty -ldl
+// g++ needs options: -g
+// ld  needs options: -lbfd -liberty -ldl
 #include <bfd.h> 
 #include <dlfcn.h>
 #include <execinfo.h>
