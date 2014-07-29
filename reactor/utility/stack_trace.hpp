@@ -42,11 +42,11 @@ namespace reactor
         }
       }
       {
-      auto it = path.find_last_of('/');
-      if (it != std::string::npos) {
-        path = path.substr(it + 1);
+        auto it = path.find_last_of('/');
+        if (it != std::string::npos) {
+          path = path.substr(it + 1);
+        }
       }
-    }
       return path;
     }
 
