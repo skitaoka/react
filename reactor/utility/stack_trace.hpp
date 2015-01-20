@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef REACTOR_UTILITY_STACKTRACE_HPP_INCLUDED
-#define REACTOR_UTILITY_STACKTRACE_HPP_INCLUDED
+#ifndef REACT_UTILITY_STACKTRACE_HPP_INCLUDED
+#define REACT_UTILITY_STACKTRACE_HPP_INCLUDED
 
 // C++ headers
 #include <ostream>
@@ -29,8 +29,7 @@
 #include <cxxabi.h>
 #endif
 
-
-namespace reactor
+namespace react
 {
   namespace utility
   {
@@ -219,7 +218,7 @@ namespace reactor
 
           IMAGEHLP_LINE64 file = {sizeof(IMAGEHLP_LINE64)};
           if (ready_ && ::SymGetLineFromAddr64(hProcess, addr, &displacement, &file)) {
-            out << '(' << reactor::utility::path_to_filename(file.FileName) << ':' << file.LineNumber << ')';
+            out << '(' << react::utility::path_to_filename(file.FileName) << ':' << file.LineNumber << ')';
           } else {
             out << "(unknown:-1)";
           }
@@ -227,7 +226,7 @@ namespace reactor
 #endif
 #ifdef __GNUC__
         if (found && filename) {
-          out << '(' << reactor::utility::path_to_filename(filename) << ':' << line_num << ')';
+          out << '(' << react::utility::path_to_filename(filename) << ':' << line_num << ')';
         } else {
           out << "(unknown:-1)";
         }
@@ -270,7 +269,7 @@ namespace reactor
 
       std::ostringstream out;
       for (int i = 0; i < size; ++i) {
-        reactor::utility::address_to_symbol::convert(out, stacktrace[i]) << '\n';
+        react::utility::address_to_symbol::convert(out, stacktrace[i]) << '\n';
       }
       return out.str();
 #else
@@ -280,4 +279,4 @@ namespace reactor
   }
 }
 
-#endif//REACTOR_UTILITY_STACKTRACE_HPP_INCLUDED
+#endif//REACT_UTILITY_STACKTRACE_HPP_INCLUDED
