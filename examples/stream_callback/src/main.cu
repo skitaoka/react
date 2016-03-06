@@ -20,11 +20,11 @@ try
   {
     reactor::cuda::stream s1;
 
-    k1 << <1, 1, 0, s1.get() >> >();
+    k1<<<1, 1, 0, s1.get()>>>();
     s1.invoke(h1);
-    k2 << <1, 1, 0, s1.get() >> >();
+    k2<<<1, 1, 0, s1.get()>>>();
     s1.invoke(h2);
-    k3 << <1, 1, 0, s1.get() >> >();
+    k3<<<1, 1, 0, s1.get()>>>();
     reactor::cuda::synchronize(s1);
   }
 
