@@ -15,10 +15,6 @@ if(WIN32)
     endif()
 endif(WIN32)
 
-if(APPLE)
-    find_package( OpenCV REQUIRED )
-endif(APPLE)
-
 find_package(CUDA REQUIRED)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../)
