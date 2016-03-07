@@ -29,7 +29,7 @@
 #include <cxxabi.h>
 #endif
 
-namespace react
+namespace reactor
 {
   namespace utility
   {
@@ -218,7 +218,7 @@ namespace react
 
           IMAGEHLP_LINE64 file = {sizeof(IMAGEHLP_LINE64)};
           if (ready_ && ::SymGetLineFromAddr64(hProcess, addr, &displacement, &file)) {
-            out << '(' << react::utility::path_to_filename(file.FileName) << ':' << file.LineNumber << ')';
+            out << '(' << reactor::utility::path_to_filename(file.FileName) << ':' << file.LineNumber << ')';
           } else {
             out << "(unknown:-1)";
           }
@@ -226,7 +226,7 @@ namespace react
 #endif
 #ifdef __GNUC__
         if (found && filename) {
-          out << '(' << react::utility::path_to_filename(filename) << ':' << line_num << ')';
+          out << '(' << reactor::utility::path_to_filename(filename) << ':' << line_num << ')';
         } else {
           out << "(unknown:-1)";
         }
@@ -269,7 +269,7 @@ namespace react
 
       std::ostringstream out;
       for (int i = 0; i < size; ++i) {
-        react::utility::address_to_symbol::convert(out, stacktrace[i]) << '\n';
+        reactor::utility::address_to_symbol::convert(out, stacktrace[i]) << '\n';
       }
       return out.str();
 #else
