@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef REACTOR_MATH_CUDNN_HPP_INCLUDED
-#define REACTOR_MATH_CUDNN_HPP_INCLUDED
+#ifndef REACTOR_MATH_DNN_HPP_INCLUDED
+#define REACTOR_MATH_DNN_HPP_INCLUDED
 
 #include <memory>
 #include <vector>
@@ -546,4 +546,4 @@ namespace reactor {
   }
 }
 
-#endif // REACTOR_MATH_CUDNN_HPP_INCLUDED
+#endif // REACTOR_MATH_DNN_HPP_INCLUDED
